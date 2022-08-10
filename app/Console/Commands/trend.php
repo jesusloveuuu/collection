@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use XFran\GTrends\GTrends;
 
 class trend extends Command
@@ -48,15 +49,32 @@ class trend extends Command
         $options = [
             'hl' => 'en-US',
             'tz' => 0,
-            'geo' => 'US',
+            //'geo' => 'US',
+            'geo' => '',
             'time' => 'all',
             'category' => 0,
         ];
         $gt = new GTrends($options);
-        dd($gt->getRelatedTopics('/m/0d05w3'));
+        //dd($gt->getGeo('/m/0d05w3'));
+        $data = $gt->getAllOneKeyWord('Master of Education(1)');
 
+        //$data = json_decode($jsonString, true);
 
-        $this->info("begin：".$gt);
+        // 写文件
+        $newJsonString = json_encode($data, JSON_PRETTY_PRINT);
+
+        $time = time();
+
+        file_put_contents(storage_path("logs/trend_$time.json"), stripslashes($newJsonString));
+
+        //$this->info("begin：".$gt);
 
     }
+
+    public function importFile2Keyword($filename = "keyword"){
+
+
+
+    }
+
 }
