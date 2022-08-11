@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTableTags extends Migration
+class CreateTableKeywordsTags extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,12 @@ class CreateTableTags extends Migration
      */
     public function up()
     {
-        Schema::create('tags', function (Blueprint $table) {
+        Schema::create('keywords_tags', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name');
-            $table->timestamps();
+            $table->unsignedBigInteger('keyword_id')->default(0)->index();
+            $table->unsignedBigInteger('tag_id')->default(0)->index();
+            $table->unique(['keyword_id','tag_id']);
+            //$table->timestamps();
         });
     }
 
@@ -27,6 +29,6 @@ class CreateTableTags extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tags');
+        Schema::dropIfExists('table_keywords_tags');
     }
 }

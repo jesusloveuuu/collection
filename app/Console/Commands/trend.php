@@ -55,7 +55,8 @@ class trend extends Command
         ];
         $gt = new GTrends($options);
 
-        $data = $gt->getCategories();
+        //$data = $gt->getSuggestionsAutocomplete("台湾");
+        $data = $gt->getAllOneKeyWord("台湾");
 
         //dd($gt->getGeo('/m/0d05w3'));
         //$data = $gt->getAllMultipleKeyWords(['USA', "UK"]);

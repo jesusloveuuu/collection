@@ -8,21 +8,21 @@ use App\Models\KeywordsTag;
 use App\Models\Tag;
 use Illuminate\Console\Command;
 
-class keywords extends Command
+class filenames_to_keywords extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'keywords {action?}';
+    protected $signature = 'filenames_to_keywords {path}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Command description 从文件名获取关键词';
 
     /**
      * Create a new command instance.
@@ -34,7 +34,7 @@ class keywords extends Command
         parent::__construct();
     }
 
-    public $path_dirs = [
+/*    public $path_dirs = [
         "Academic discipline",
         "Bachelor_s degree",
         "Bag",
@@ -47,7 +47,7 @@ class keywords extends Command
         "Region",
         "Sports",
         "Vehicle",
-    ];
+    ];*/
 
     /**
      * Execute the console command.
@@ -58,11 +58,38 @@ class keywords extends Command
     {
 
         $this->line("--------------------------------------------------------------------------------------------------------------------------------");
-
         $this->info("begin");
-        //dirs写入tags表
+
+        //获取参数
+        //路径参数，在storage/app下的
+        $argument_path = $this->argument('path');
+        $this->info("argument_path: $argument_path");
+        if(empty($argument_path)){
+            $this->error("argument_path is empty!");
+            exit();
+        }
+        $path_dir = storage_path("app/$argument_path/");
+        $this->info("path_dir: $path_dir");
+        $is_dir = is_dir($path_dir);
+        if(empty($is_dir)){
+            $this->error("$path_dir is not a dir!");
+            exit();
+        }
+
+        //获取一层path
+        $dp = dir($path_dir);
+        $path_child_level_1 = [];
+        while ($file = $dp->read()) {
+            if ($file !== "." && $file !== "..") {
+                $path_child_level_1[] = $file;
+            }
+        }
+        $dp->close();
+        sort($path_child_level_1);
+
+        //一层path写入tags表
         $this->info("check tags");
-        foreach ($this->path_dirs as $temp_dir) {
+        foreach ($path_child_level_1 as $temp_dir) {
             $tag = Tag::where('name', $temp_dir)->first();
             if (empty($tag)) {
                 $this->info($temp_dir . " creating");
@@ -77,8 +104,8 @@ class keywords extends Command
         //遍历目录，获取png文件的文件名
         $map_dir_filenames = [];
         $this->info("dir to filenames");
-        foreach ($this->path_dirs as $temp_dir) {
-            $temp_dir_path = storage_path('app/Google Trends/' . $temp_dir);
+        foreach ($path_child_level_1 as $temp_dir) {
+            $temp_dir_path = $path_dir . $temp_dir;
             $temp_filepaths = $this->get_filepaths_by_dir($temp_dir_path);//获取该目录下的全部文件路径
             $temp_filenames = [];
             foreach ($temp_filepaths as $temp_filepath_index => $temp_filepath_value) {
