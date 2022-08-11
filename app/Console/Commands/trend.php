@@ -42,7 +42,8 @@ class trend extends Command
         //
         $this->line("--------------------------------------------------------------------------------------------------------------------------------");
 
-        $this->info("begin：");
+        $this->info("begin");
+
 
 
         //This options are by default if none provided

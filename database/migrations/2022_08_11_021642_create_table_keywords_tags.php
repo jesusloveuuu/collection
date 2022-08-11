@@ -17,6 +17,7 @@ class CreateTableKeywordsTags extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('keyword_id')->default(0)->index();
             $table->bigInteger('tag_id')->default(0)->index();
+            $table->unique(['keyword_id','tag_id']);
             //$table->timestamps();
         });
     }
