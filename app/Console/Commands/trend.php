@@ -44,8 +44,6 @@ class trend extends Command
 
         $this->info("begin");
 
-
-
         //This options are by default if none provided
         $options = [
             'hl' => 'en-US',
@@ -56,9 +54,13 @@ class trend extends Command
             'category' => 0,
         ];
         $gt = new GTrends($options);
-        //dd($gt->getGeo('/m/0d05w3'));
-        $data = $gt->getAllOneKeyWord('Master of Education(1)');
 
+        $data = $gt->getCategories();
+
+        //dd($gt->getGeo('/m/0d05w3'));
+        //$data = $gt->getAllMultipleKeyWords(['USA', "UK"]);
+
+        var_dump($data);
         //$data = json_decode($jsonString, true);
 
         // 写文件
@@ -72,8 +74,8 @@ class trend extends Command
 
     }
 
-    public function importFile2Keyword($filename = "keyword"){
-
+    public function importFile2Keyword($filename = "keyword")
+    {
 
 
     }

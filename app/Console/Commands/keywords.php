@@ -84,6 +84,7 @@ class keywords extends Command
             foreach ($temp_filepaths as $temp_filepath_index => $temp_filepath_value) {
                 $temp_filename_value = basename($temp_filepath_value, ".png");
                 $temp_filename_value = str_replace("(1)", "", $temp_filename_value);
+                $temp_filename_value = str_replace("(2)", "", $temp_filename_value);
                 $temp_filenames[] = $temp_filename_value;
             }
 
@@ -107,7 +108,7 @@ class keywords extends Command
             if (!empty($tag)) {
                 foreach ($temp_map_keywords as $temp_keyword) {
                     //查找keyword
-                    $keyword = Keyword::where('name', '=',$temp_keyword)->first();
+                    $keyword = Keyword::where('name', '=', $temp_keyword)->first();
                     if (empty($keyword)) {
                         $this->info($temp_keyword . " keyword creating");
                         $keyword = new Keyword();
