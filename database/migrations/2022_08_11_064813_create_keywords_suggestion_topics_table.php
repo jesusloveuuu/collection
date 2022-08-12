@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSuggestionTopicsTable extends Migration
+class CreateKeywordsSuggestionTopicsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateSuggestionTopicsTable extends Migration
      */
     public function up()
     {
-        Schema::create('suggestion_topics', function (Blueprint $table) {
+        Schema::create('keywords_suggestion_topics', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('keyword_id')->index();
             $table->string('keyword_name');
@@ -32,6 +32,6 @@ class CreateSuggestionTopicsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('suggestion_topics');
+        Schema::dropIfExists('keywords_suggestion_topics');
     }
 }

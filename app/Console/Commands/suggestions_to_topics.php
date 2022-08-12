@@ -4,11 +4,11 @@ namespace App\Console\Commands;
 
 use App\Models\Keyword;
 use App\Models\KeywordsSuggestion;
-use App\Models\SuggestionTopic;
+use App\Models\KeywordsSuggestionTopic;
 use App\Models\Topic;
 use Illuminate\Console\Command;
 
-class trend_suggest_topic extends Command
+class suggestionstotopics extends Command
 {
     /**
      * The name and signature of the console command.
@@ -88,9 +88,9 @@ class trend_suggest_topic extends Command
                     }
 
                     //判断是否关联过
-                    $temp_suggestion_topic = SuggestionTopic::where('keyword_id', $temp_suggestion->keyword_id)->where('topic_id', $temp_topic->id)->orderBy('id','desc')->first();
+                    $temp_suggestion_topic = KeywordsSuggestionTopic::where('keyword_id', $temp_suggestion->keyword_id)->where('topic_id', $temp_topic->id)->orderBy('id','desc')->first();
                     if(empty($temp_suggestion_topic)){
-                        $temp_suggestion_topic = new SuggestionTopic();
+                        $temp_suggestion_topic = new KeywordsSuggestionTopic();
                         $temp_suggestion_topic->keyword_id = $temp_suggestion->keyword_id;
                         $temp_suggestion_topic->keyword_name = $temp_suggestion->keyword;
                         $temp_suggestion_topic->topic_id = $temp_topic->id;
