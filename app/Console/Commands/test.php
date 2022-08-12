@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use XFran\GTrends\GTrends;
 
-class trend extends Command
+class test extends Command
 {
     /**
      * The name and signature of the console command.

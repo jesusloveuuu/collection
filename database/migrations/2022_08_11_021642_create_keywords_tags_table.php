@@ -16,7 +16,9 @@ class CreateTableKeywordsTags extends Migration
         Schema::create('keywords_tags', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('keyword_id')->default(0)->index();
+            $table->string('keyword_name')->default("");
             $table->unsignedBigInteger('tag_id')->default(0)->index();
+            $table->string('tag_name')->default("");
             $table->unique(['keyword_id','tag_id']);
             //$table->timestamps();
         });

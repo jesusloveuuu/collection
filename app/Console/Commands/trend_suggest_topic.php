@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Keyword;
-use App\Models\Suggestion;
+use App\Models\KeywordsSuggestion;
 use App\Models\SuggestionTopic;
 use App\Models\Topic;
 use Illuminate\Console\Command;
@@ -50,7 +50,7 @@ class trend_suggest_topic extends Command
         $argument_begin = $this->argument('begin');
         $argument_limit = $this->argument('limit');
 
-        $suggestions = Suggestion::offset($argument_begin)->take($argument_limit)->get();
+        $suggestions = KeywordsSuggestion::offset($argument_begin)->take($argument_limit)->get();
 
         foreach ($suggestions as $temp_suggestion){
             if(empty($temp_suggestion->json)){

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class Suggestion extends Model
+class KeywordsSuggestion extends Model
 {
 
 

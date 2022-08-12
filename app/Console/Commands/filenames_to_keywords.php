@@ -34,20 +34,20 @@ class filenames_to_keywords extends Command
         parent::__construct();
     }
 
-/*    public $path_dirs = [
-        "Academic discipline",
-        "Bachelor_s degree",
-        "Bag",
-        "Car",
-        "Career",
-        "Computer",
-        "Food",
-        "Internet",
-        "Master_s Degree",
-        "Region",
-        "Sports",
-        "Vehicle",
-    ];*/
+    /*    public $path_dirs = [
+            "Academic discipline",
+            "Bachelor_s degree",
+            "Bag",
+            "Car",
+            "Career",
+            "Computer",
+            "Food",
+            "Internet",
+            "Master_s Degree",
+            "Region",
+            "Sports",
+            "Vehicle",
+        ];*/
 
     /**
      * Execute the console command.
@@ -61,20 +61,23 @@ class filenames_to_keywords extends Command
         $this->info("begin");
 
         //获取参数
-        //路径参数，在storage/app下的
         $argument_path = $this->argument('path');
         $this->info("argument_path: $argument_path");
-        if(empty($argument_path)){
+        if (empty($argument_path)) {
             $this->error("argument_path is empty!");
             exit();
         }
+        var_dump($argument_path);
+
+        //路径校验，在storage/app下的
         $path_dir = storage_path("app/$argument_path/");
         $this->info("path_dir: $path_dir");
         $is_dir = is_dir($path_dir);
-        if(empty($is_dir)){
+        if (empty($is_dir)) {
             $this->error("$path_dir is not a dir!");
             exit();
         }
+        var_dump($path_dir);
 
         //获取一层path
         $dp = dir($path_dir);
@@ -86,18 +89,20 @@ class filenames_to_keywords extends Command
         }
         $dp->close();
         sort($path_child_level_1);
+        var_dump($path_child_level_1);
 
         //一层path写入tags表
         $this->info("check tags");
         foreach ($path_child_level_1 as $temp_dir) {
             $tag = Tag::where('name', $temp_dir)->first();
             if (empty($tag)) {
-                $this->info($temp_dir . " creating");
+                $this->comment($temp_dir . " creating");
                 $tag = new Tag();
+                $temp_dir = str_replace("_", "'", $temp_dir);
                 $tag->name = $temp_dir;
                 $tag->save();
             } else {
-                $this->comment($temp_dir . " tag already have id: " . $tag->id);
+                $this->info($temp_dir . " tag already exists, id: " . $tag->id);
             }
         }
 
@@ -112,6 +117,11 @@ class filenames_to_keywords extends Command
                 $temp_filename_value = basename($temp_filepath_value, ".png");
                 $temp_filename_value = str_replace("(1)", "", $temp_filename_value);
                 $temp_filename_value = str_replace("(2)", "", $temp_filename_value);
+                $temp_filename_value = str_replace("_", "'", $temp_filename_value);
+                if(strpos($temp_filename_value," - ") !== false ){
+                    $temp_filename_value_array = explode(' - ',$temp_filename_value);
+                    $temp_filename_value = $temp_filename_value_array[0];
+                }
                 $temp_filenames[] = $temp_filename_value;
             }
 
@@ -122,40 +132,55 @@ class filenames_to_keywords extends Command
             $temp_filenames = array_values($temp_filenames);
 
             $map_dir_filenames[$temp_dir] = $temp_filenames;
-
         }
+        var_dump($map_dir_filenames);
 
         //遍历映射，写入keywards
-        $map_tag_keywords = $map_dir_filenames;
-        var_dump($map_tag_keywords);
         $this->info("map to db");
-        foreach ($map_tag_keywords as $temp_map_tag => $temp_map_keywords) {
+        $map_tag_keywords = $map_dir_filenames;
+        foreach ($map_tag_keywords as $temp_tag_name => $temp_keyword_names) {
             //查询tag
-            $tag = Tag::where('name', $temp_map_tag)->first();
-            if (!empty($tag)) {
-                foreach ($temp_map_keywords as $temp_keyword) {
-                    //查找keyword
-                    $keyword = Keyword::where('name', '=', $temp_keyword)->first();
-                    if (empty($keyword)) {
-                        $this->info($temp_keyword . " keyword creating");
-                        $keyword = new Keyword();
-                        $keyword->name = $temp_keyword;
-                        $keyword->save();
-                    } else {
-                        $this->comment($temp_keyword . " keyword already have id: " . $keyword->id);
-                    }
+            $tag = Tag::where('name', $temp_tag_name)->first();
+            if(empty($tag)){
+                continue;
+            }
 
-                    //检测关联
-                    $keyword_tag = KeywordsTag::where('keyword_id', $keyword->id)->where('tag_id', $tag->id)->first();
-                    if (empty($keyword_tag)) {
-                        $this->info($temp_keyword . " keyword_tag creating");
-                        $keyword_tag = new KeywordsTag();
-                        $keyword_tag->keyword_id = $keyword->id;
-                        $keyword_tag->tag_id = $tag->id;
-                        $keyword_tag->save();
-                    } else {
-                        $this->comment("keyword_tag already have id: " . $keyword_tag->id);
-                    }
+            //遍历map
+            foreach ($temp_keyword_names as $temp_keyword_name) {
+                //查找keyword
+                $keyword = Keyword::where('name', '=', $temp_keyword_name)->orderBy('id', 'desc')->first();
+
+                //不存在则创建
+                if (empty($keyword)) {
+                    $this->comment($temp_keyword_name . " keyword creating");
+                    $keyword = new Keyword();
+                    $keyword->name = $temp_keyword_name;
+                    $keyword->save();
+                } else {
+                    $this->info($temp_keyword_name . " keyword already exists, id: " . $keyword->id);
+                }
+
+                //检测关联
+                $keyword_tag = KeywordsTag::where('keyword_id', $keyword->id)->where('tag_id', $tag->id)->orderBy('id', 'desc')->first();
+                if (empty($keyword_tag)) {
+                    //不存在，创建
+                    $this->comment($temp_keyword_name . " keyword_tag creating");
+
+                    $keyword_tag = new KeywordsTag();
+                    $keyword_tag->keyword_id = $keyword->id;
+                    $keyword_tag->keyword_name = $temp_keyword_name ?? '';
+                    $keyword_tag->tag_id = $tag->id;
+                    $keyword_tag->tag_name = $tag->name ?? '';
+                    $keyword_tag->save();
+                } else {
+                    $this->info("keyword_tag already exists, id: " . $keyword_tag->id);
+                }
+
+                //是否补充数据
+                if(0){
+                    if (empty($keyword_tag->tag_name)) $keyword_tag->tag_name = $tag->name ?? '';
+                    if (empty($keyword_tag->keyword_name)) $keyword_tag->keyword_name = $temp_keyword_name ?? '';
+                    $keyword_tag->save();
                 }
 
             }
