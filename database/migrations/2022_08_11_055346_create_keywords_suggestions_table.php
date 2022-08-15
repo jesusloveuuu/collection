@@ -13,13 +13,12 @@ class CreateKeyWordsSuggestionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('keywords_suggestions', function (Blueprint $table) {
+        Schema::create('terms_suggestions', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('keyword_id')->index();
-            $table->string('keyword_name');
+            $table->unsignedBigInteger('term_id')->index();
+            $table->string('term_name');
             $table->json('suggestion');
             $table->string('data_source')->default("");
-            $table->string('tool')->default("");
             $table->timestamps();
         });
     }

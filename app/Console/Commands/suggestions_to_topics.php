@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Keyword;
+use App\Models\Word;
 use App\Models\KeywordsSuggestion;
 use App\Models\KeywordsSuggestionTopic;
 use App\Models\Topic;

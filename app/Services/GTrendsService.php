@@ -54,8 +54,8 @@ class GTrendsService
         $options_key = $prefix;
 
         //日期开关
-        if(0){
-            $options_key .=":" . date('Y-m-d',time());
+        if (0) {
+            $options_key .= ":" . date('Y-m-d', time());
         }
 
         foreach ($options as $key => $value) {
@@ -66,33 +66,53 @@ class GTrendsService
 
     public function getSuggestionsAutocomplete(string $kWord): array
     {
+        $cache_key = $this->getOptionsCacheKey('GTrends:' . __FUNCTION__ . ":" . $kWord);
+        $cache_value = Cache::get($cache_key);
 
-        $gtrends = new GTrends($this->options);
-        $array_gtrend = $gtrends->getSuggestionsAutocomplete($kWord) ?? [];
-        Cache::set($this->getOptionsCacheKey('GTrends:'.__FUNCTION__.":".$kWord), json_encode($array_gtrend));
+        if (empty($cache_value)) {
+            $gtrends = new GTrends($this->options);
+            $array_gtrend = $gtrends->getSuggestionsAutocomplete($kWord) ?? [];
+            Cache::set($cache_key, json_encode($array_gtrend));
+        } else {
+            $array_gtrend = json_decode($cache_value, true);
+        }
 
         return $array_gtrend;
     }
 
     public function getAllOneKeyWord(string $kWord): array
     {
-        $gtrends = new GTrends($this->options);
-        $array_gtrend = $gtrends->getAllOneKeyWord($kWord) ?? [];
-        Cache::set($this->getOptionsCacheKey('GTrends:'.__FUNCTION__.":".$kWord), json_encode($array_gtrend));
+        $cache_key = $this->getOptionsCacheKey('GTrends:' . __FUNCTION__ . ":" . $kWord);
+        $cache_value = Cache::get($cache_key);
+
+        if (empty($cache_value)) {
+            $gtrends = new GTrends($this->options);
+            $array_gtrend = $gtrends->getAllOneKeyWord($kWord) ?? [];
+            Cache::set($cache_key, json_encode($array_gtrend));
+        } else {
+            $array_gtrend = json_decode($cache_value, true);
+        }
+
 
         return $array_gtrend;
     }
 
     public function getRelatedTopics(string $kWord): array
     {
-        $gtrends = new GTrends($this->options);
-        $array_gtrend = $gtrends->getAllOneKeyWord($kWord) ?? [];
-        Cache::set($this->getOptionsCacheKey('GTrends:'.__FUNCTION__.":".$kWord), json_encode($array_gtrend));
+        $cache_key = $this->getOptionsCacheKey('GTrends:' . __FUNCTION__ . ":" . $kWord);
+        $cache_value = Cache::get($cache_key);
+
+        if (empty($cache_value)) {
+            $gtrends = new GTrends($this->options);
+            $array_gtrend = $gtrends->getRelatedTopics($kWord) ?? [];
+            Cache::set($cache_key, json_encode($array_gtrend));
+        } else {
+            $array_gtrend = json_decode($cache_value, true);
+        }
+
 
         return $array_gtrend;
     }
-
-
 
 
 }
