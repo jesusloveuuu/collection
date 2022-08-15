@@ -3,6 +3,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Cache;
 use XFran\GTrends\GTrends;
 
 use function array_key_exists;
@@ -19,12 +20,13 @@ use function unlink;
 class GTrendsService
 {
     private array $options = [
-        'hl'        => 'en-US',
-        'tz'        => 0,
-        'geo'       => 'US',
-        'time'      => 'all',
-        'category'  => 0,
+        'hl' => 'en-US',
+        'tz' => 0,
+        'geo' => 'US',
+        'time' => 'all',
+        'category' => 0,
     ];
+
 
     public function __construct(array $options = [])
     {
@@ -44,7 +46,53 @@ class GTrendsService
         return $this;
     }
 
-    //记录日志表
+    public function getOptionsCacheKey($prefix)
+    {
+
+        $options = $this->options;
+        ksort($options);
+        $options_key = $prefix;
+
+        //日期开关
+        if(0){
+            $options_key .=":" . date('Y-m-d',time());
+        }
+
+        foreach ($options as $key => $value) {
+            $options_key .= ":" . $key . ":" . $value;
+        }
+        return $options_key;
+    }
+
+    public function getSuggestionsAutocomplete(string $kWord): array
+    {
+
+        $gtrends = new GTrends($this->options);
+        $array_gtrend = $gtrends->getSuggestionsAutocomplete($kWord) ?? [];
+        Cache::set($this->getOptionsCacheKey('GTrends:'.__FUNCTION__.":".$kWord), json_encode($array_gtrend));
+
+        return $array_gtrend;
+    }
+
+    public function getAllOneKeyWord(string $kWord): array
+    {
+        $gtrends = new GTrends($this->options);
+        $array_gtrend = $gtrends->getAllOneKeyWord($kWord) ?? [];
+        Cache::set($this->getOptionsCacheKey('GTrends:'.__FUNCTION__.":".$kWord), json_encode($array_gtrend));
+
+        return $array_gtrend;
+    }
+
+    public function getRelatedTopics(string $kWord): array
+    {
+        $gtrends = new GTrends($this->options);
+        $array_gtrend = $gtrends->getAllOneKeyWord($kWord) ?? [];
+        Cache::set($this->getOptionsCacheKey('GTrends:'.__FUNCTION__.":".$kWord), json_encode($array_gtrend));
+
+        return $array_gtrend;
+    }
+
+
 
 
 }

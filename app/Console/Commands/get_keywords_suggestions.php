@@ -4,7 +4,9 @@ namespace App\Console\Commands;
 
 use App\Models\Keyword;
 use App\Models\KeywordsSuggestion;
+use App\Services\GTrendsService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 use XFran\GTrends\GTrends;
 
 class get_keywords_suggestions extends Command
@@ -81,8 +83,9 @@ class get_keywords_suggestions extends Command
             } else {
                 //已经存在
                 $this->info($temp_keyword->name . " already have suggestion");
-
             }
+
+            //Cache::add('KeysSuggestion:' . $temp_keyword->id,$temp_suggestion->suggestion);
 
             //补充空字段
             if (0) {
@@ -120,8 +123,8 @@ class get_keywords_suggestions extends Command
             'category' => 0,//0就是全部
         ];
 
-        $trend = new GTrends($options);
-        $array = $trend->getSuggestionsAutocomplete($keyword);
+        $trend_service = new GTrendsService($options);
+        $array = $trend_service->getSuggestionsAutocomplete($keyword);
         var_dump($array);
 
         return $array;
