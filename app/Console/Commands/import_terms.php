@@ -148,7 +148,7 @@ class import_terms extends Command
 
             //遍历map
             foreach ($temp_term_name_array as $temp_term_name) {
-                //查找word
+                //查找term
                 $term = Term::where('name', '=', $temp_term_name)->orderBy('id', 'desc')->first();
 
                 //不存在则创建
