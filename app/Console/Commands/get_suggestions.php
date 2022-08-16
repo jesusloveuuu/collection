@@ -53,7 +53,7 @@ class get_suggestions extends Command
         $argument_limit = $this->argument('limit');
 
         //获取关键词
-        $term_array = Term::offset($argument_begin)->take($argument_limit)->get();
+        $term_array = Term::where('type',0)->offset($argument_begin)->take($argument_limit)->get();
         $total = count($term_array);
 
         //获取关键词推荐

@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Term;
+use App\Models\Topic;
 use Illuminate\Console\Command;
 
 class get_related_topics extends Command
@@ -12,7 +13,7 @@ class get_related_topics extends Command
      *
      * @var string
      */
-    protected $signature = 'get_suggestions111 {begin=0} {limit=1}';
+    protected $signature = 'get_related_topics {begin=0} {limit=1}';
 
     /**
      * The console command description.
@@ -40,7 +41,7 @@ class get_related_topics extends Command
     {
         $this->line("--------------------------------------------------------------------------------------------------------------------------------");
         $this->info("begin");
-        $this->info("get_suggestions");
+        $this->info("get_related_topics");
 
         //参数
         $argument_begin = $this->argument('begin');
@@ -51,43 +52,43 @@ class get_related_topics extends Command
         $total = count($term_array);
 
         //获取关键词推荐
-        foreach ($term_array as $index => $temp_term_object) {
+        foreach ($term_array as $index => $term_object) {
 
             $this->info("index: " . $index . ' / ' . $total);
             $is_save = false;
-            if (empty($temp_term_object)) {
+            if (empty($term_object)) {
                 $this->warn("term empty!");
                 continue;
             }
-            $this->info($temp_term_object->name);
+            $this->info($term_object->name);
             //var_dump($temp_term_object);
 
             //查询json
-            if (empty($temp_term_object->suggestion_json)) {
-                $this->comment($temp_term_object->name . " suggestion_json auto completing...");
+            if (empty($term_object->suggestion_json)) {
+                $this->comment($term_object->name . " suggestion_json auto completing...");
 
                 //网络请求
-                $suggestion_array = $this->getSuggestionsArray($temp_term_object->name);
-                $temp_term_object->suggestion_json = json_encode($suggestion_array);
+                $suggestion_array = $this->getSuggestionsArray($term_object->name);
+                $term_object->suggestion_json = json_encode($suggestion_array);
                 $is_save = true;
 
             } else {
                 //已经存在
-                $this->info($temp_term_object->name . " already have suggestion_json");
+                $this->info($term_object->name . " already have suggestion_json");
             }
 
             //关联操作
             if(1){
-                $suggestion_array = json_decode($temp_term_object->suggestion_json,true);
+                $suggestion_array = json_decode($term_object->suggestion_json,true);
                 $array_topics = $suggestion_array['topics'] ?? [];
                 if(!empty($array_topics)){
 
                     //补充完善json，相似度等
-                    if(empty($array_topics[0]['similar'])){
+                    if(empty($array_topics[0]['similar'] ?? null)){
                         //获取相似度map
-                        $map_similar = [];
+                        $this->info("checking array_topics similar");
                         foreach ($array_topics as $index_topic => $object_topic){
-                            similar_text($temp_term_object->name,$object_topic['title'],$percent);
+                            similar_text($term_object->name,$object_topic['title'],$percent);
                             $array_topics[$index_topic]['similar'] = $percent;
                         }
 
@@ -95,14 +96,45 @@ class get_related_topics extends Command
 
                         $suggestion_array['topics'] = $array_topics;
 
-                        $temp_term_object->suggestion_json = json_encode($suggestion_array);
+                        $term_object->suggestion_json = json_encode($suggestion_array);
 
                         $is_save = true;
                     }
 
-                    //创建topic，字符完全相等
+                    //检查字符完全相等
+                    $this->info("checking array_topics");
                     foreach ($array_topics as $index_topic => $object_topic){
-                        if($temp_term_object->name === $object_topic){
+                        if($term_object->name === $object_topic['title']){
+                            $this->info("Comparing ". $object_topic['title'] . ' and ' .$term_object->name  );
+                            //创建对应话题
+                            $topic_most_similar = Topic::where('mid', $object_topic['mid'])->orderBy('id','desc')->first();
+                            if(empty($topic_most_similar)){
+                                $topic_most_similar = new Topic();
+                                $topic_most_similar = $topic_most_similar->createTopic($object_topic);
+                                $this->info("Created Topic ID: " . $topic_most_similar->id);
+                                $is_save = true;
+                            }else{
+                                $this->info("Already exist Topic ID: " . $topic_most_similar->id);
+                            }
+
+                            //创建topic对应的term
+                            $mid = $object_topic['mid'];
+                            $term_most_similar = Term::where('name', '=', $mid)->where('type',1)->orderBy('id', 'desc')->first();
+
+                            //不存在则创建
+                            if (empty($term_most_similar)) {
+                                $this->comment("\"$mid\" term creating...");
+                                $term_most_similar = new Term();
+                                $term_most_similar->name = $mid;
+                                $term_most_similar->namespace = '';
+                                $term_most_similar->type = 1;
+                                $term_most_similar->topic_title = $object_topic['title'];
+                                $term_most_similar->topic_type = $object_topic['type'];
+                                $term_most_similar->save();
+                                $this->info("\"$mid\" term created, Term ID: $term_most_similar->id");
+                            } else {
+                                $this->info("\"$mid\" term already exists, Term ID: $term_most_similar->id");
+                            }
 
                         }
                     }
@@ -111,10 +143,8 @@ class get_related_topics extends Command
                 }
             }
 
-
-
             if ($is_save) {
-                $temp_term_object->save();
+                $term_object->save();
             }
 
 
@@ -122,5 +152,6 @@ class get_related_topics extends Command
 
         $this->info("end");
         $this->line("--------------------------------------------------------------------------------------------------------------------------------");
+
     }
 }

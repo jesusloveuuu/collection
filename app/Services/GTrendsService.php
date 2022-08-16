@@ -72,7 +72,7 @@ class GTrendsService
         if (empty($cache_value)) {
             $gtrends = new GTrends($this->options);
             $array_gtrend = $gtrends->getSuggestionsAutocomplete($kWord) ?? [];
-            Cache::set($cache_key, json_encode($array_gtrend));
+            Cache::put($cache_key, json_encode($array_gtrend));
         } else {
             $array_gtrend = json_decode($cache_value, true);
         }
@@ -82,19 +82,37 @@ class GTrendsService
 
     public function getAllOneKeyWord(string $kWord): array
     {
-        $cache_key = $this->getOptionsCacheKey('GTrends:' . __FUNCTION__ . ":" . $kWord);
-        $cache_value = Cache::get($cache_key);
 
+        $t1 = time();
+
+        $cache_key = $this->getOptionsCacheKey('GTrends:' . __FUNCTION__ . ":" . $kWord);
+        //var_dump($cache_key);
+
+        //$forever = Cache::forever('forever', ['forever']);
+        //var_dump($forever);
+
+        $cache_value = Cache::get($cache_key);
         if (empty($cache_value)) {
             $gtrends = new GTrends($this->options);
             $array_gtrend = $gtrends->getAllOneKeyWord($kWord) ?? [];
-            Cache::set($cache_key, json_encode($array_gtrend));
+            $json_gtrend = json_encode($array_gtrend);
+            //var_dump(strlen($json_gtrend));
+            //var_dump($array_gtrend);
+            $forever = Cache::forever($cache_key, $json_gtrend);
+            //var_dump($forever);
+            if (!$forever) {
+                var_dump("warning! cache failed!");
+            }
         } else {
-            $array_gtrend = json_decode($cache_value, true);
+            $array_gtrend = json_decode($cache_value, true) ?? [];
         }
 
+        $t2 = time();
 
-        return $array_gtrend;
+        var_dump("time: " . ($t2 - $t1) . ' s');
+
+
+        return $array_gtrend ?? [];
     }
 
     public function getRelatedTopics(string $kWord): array
@@ -105,7 +123,7 @@ class GTrendsService
         if (empty($cache_value)) {
             $gtrends = new GTrends($this->options);
             $array_gtrend = $gtrends->getRelatedTopics($kWord) ?? [];
-            Cache::set($cache_key, json_encode($array_gtrend));
+            Cache::put($cache_key, json_encode($array_gtrend));
         } else {
             $array_gtrend = json_decode($cache_value, true);
         }

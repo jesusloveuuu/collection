@@ -21,6 +21,7 @@ class CreateTermsTable extends Migration
             $table->unsignedTinyInteger('type')->default(0)->comment('类型，0=normal，1=topic，2=query');
             $table->json('suggestion_json')->nullable();
             $table->json('related_topics_json')->nullable();
+            $table->json('all_json')->nullable();
             $table->timestamps();
         });
     }
