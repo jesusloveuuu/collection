@@ -164,7 +164,7 @@ class get_suggestions extends Command
     public function getSuggestionsArray($keyword)
     {
         $this->info("GTrends...");
-        $random = random_int(0, 1);
+        $random = random_int(5, 15);
         sleep($random);//暂停，反反爬虫
         $options = [
             'hl' => 'en-US',//英文

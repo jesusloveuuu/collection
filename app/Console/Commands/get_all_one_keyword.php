@@ -94,7 +94,7 @@ class get_all_one_keyword extends Command
     public function getAllOneKeywordArray($keyword)
     {
         $this->info("GTrends...");
-        $random = random_int(0, 1);
+        $random = random_int(60, 90);
         sleep($random);//暂停，反反爬虫
         $options = [
             'hl' => 'en-US',//英文
