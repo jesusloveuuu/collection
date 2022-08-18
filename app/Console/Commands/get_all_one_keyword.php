@@ -49,7 +49,7 @@ class get_all_one_keyword extends Command
         $argument_limit = $this->argument('limit');
 
         //获取关键词
-        $term_array = Term::offset($argument_begin)->take($argument_limit)->get();
+        $term_array = Term::where('type',1)->offset($argument_begin)->take($argument_limit)->get();
         $total = count($term_array);
 
         //获取关键词推荐
@@ -64,13 +64,23 @@ class get_all_one_keyword extends Command
             $this->info($term_object->name);
             //var_dump($temp_term_object);
 
+            if(!empty($term_object->all_json)){
+                $all_json_array = json_decode($term_object->all_json);
+            }
+
             //查询json
-            if (empty($term_object->all_json)) {
+            if (empty($all_json_array)) {
                 $this->comment($term_object->name . " all_json getting...");
 
                 //网络请求
                 $all_array = $this->getAllOneKeywordArray($term_object->name);
-                $term_object->all_json = json_encode($all_array);
+
+                if(empty($all_array)){
+                    $this->comment($term_object->name . " all_json got empty!");
+                    $term_object->all_json = null;
+                }else{
+                    $term_object->all_json = json_encode($all_array);
+                }
                 $is_save = true;
 
             } else {
@@ -94,8 +104,6 @@ class get_all_one_keyword extends Command
     public function getAllOneKeywordArray($keyword)
     {
         $this->info("GTrends...");
-        $random = random_int(60, 90);
-        sleep($random);//暂停，反反爬虫
         $options = [
             'hl' => 'en-US',//英文
             'tz' => 0,//没搞懂

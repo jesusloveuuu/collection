@@ -61,6 +61,8 @@ class GTrendsService
         foreach ($options as $key => $value) {
             $options_key .= ":" . $key . ":" . $value;
         }
+
+        //var_dump($options_key);
         return $options_key;
     }
 
@@ -86,33 +88,22 @@ class GTrendsService
         $t1 = time();
 
         $cache_key = $this->getOptionsCacheKey('GTrends:' . __FUNCTION__ . ":" . $kWord);
-        //var_dump($cache_key);
 
-        //$forever = Cache::forever('forever', ['forever']);
-        //var_dump($forever);
+        $cache_value_array = $this->getArrayFromCacheJson($cache_key);
 
-        $cache_value = Cache::get($cache_key);
-        if (empty($cache_value)) {
+        if (empty($cache_value_array)) {
             $gtrends = new GTrends($this->options);
-            $array_gtrend = $gtrends->getAllOneKeyWord($kWord) ?? [];
-            $json_gtrend = json_encode($array_gtrend);
-            //var_dump(strlen($json_gtrend));
-            //var_dump($array_gtrend);
-            $forever = Cache::forever($cache_key, $json_gtrend);
-            //var_dump($forever);
-            if (!$forever) {
-                var_dump("warning! cache failed!");
-            }
-        } else {
-            $array_gtrend = json_decode($cache_value, true) ?? [];
+            $cache_value_array = $gtrends->getAllOneKeyWord($kWord);
+
+            $this->setArrayToCacheJson($cache_key, $cache_value_array);
         }
 
         $t2 = time();
 
-        var_dump("time: " . ($t2 - $t1) . ' s');
+        echo "time: " . ($t2 - $t1) . ' s';
+        $this->sleep_delay($t2 - $t1);
 
-
-        return $array_gtrend ?? [];
+        return $cache_value_array ?? [];
     }
 
     public function getRelatedTopics(string $kWord): array
@@ -130,6 +121,61 @@ class GTrendsService
 
 
         return $array_gtrend;
+    }
+
+    private function getArrayFromCacheJson($cache_key)
+    {
+
+        $cache_value = Cache::get($cache_key);
+        $array = [];
+        if (!empty($cache_value)) {
+            $array = json_decode($cache_value, true) ?? [];
+        }
+
+        return $array;
+
+    }
+
+    private function setArrayToCacheJson($cache_key, $array)
+    {
+        $forever = false;
+        if (!empty($array)) {
+            $json_gtrend = json_encode($array, true);
+            //var_dump(strlen($json_gtrend));
+            //var_dump($array_gtrend);
+            $forever = Cache::forever($cache_key, $json_gtrend);
+            //var_dump($forever);
+            if (!$forever) {
+                var_dump("set cache failed!");
+            }
+        }
+
+        return $forever;
+
+    }
+
+    private function sleep_delay($time = 10)
+    {
+        if ($time < 5) {
+            $time = 1;
+        } else if ($time > 60) {
+            $time = 60;
+        }
+
+        for ($i = $time; $i > 0; $i--) {
+
+            $random = random_int(0, $time);
+            echo "($i,$random).";
+            if ($random !== 0) {
+                $i++;
+            }
+            sleep(1);//暂停，反反爬虫
+        }
+
+        echo "\n";
+
+        return true;
+
     }
 
 

@@ -13,7 +13,7 @@ class test extends Command
      *
      * @var string
      */
-    protected $signature = 'trend';
+    protected $signature = 'test';
 
     /**
      * The console command description.
@@ -56,7 +56,7 @@ class test extends Command
         $gt = new GTrends($options);
 
         //$data = $gt->getSuggestionsAutocomplete("台湾");
-        $data = $gt->getAllOneKeyWord("台湾");
+        $data = $gt->getAllOneKeyWord("/m/0jwx_my");
 
         //dd($gt->getGeo('/m/0d05w3'));
         //$data = $gt->getAllMultipleKeyWords(['USA', "UK"]);
@@ -72,12 +72,6 @@ class test extends Command
         file_put_contents(storage_path("logs/trend_$time.json"), stripslashes($newJsonString));
 
         //$this->info("begin：".$gt);
-
-    }
-
-    public function importFile2Keyword($filename = "keyword")
-    {
-
 
     }
 
