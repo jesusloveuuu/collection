@@ -68,18 +68,26 @@ class GTrendsService
 
     public function getSuggestionsAutocomplete(string $kWord): array
     {
-        $cache_key = $this->getOptionsCacheKey('GTrends:' . __FUNCTION__ . ":" . $kWord);
-        $cache_value = Cache::get($cache_key);
 
-        if (empty($cache_value)) {
+        $t1 = time();
+
+        $cache_key = $this->getOptionsCacheKey('GTrends:' . __FUNCTION__ . ":" . $kWord);
+
+        $cache_value_array = $this->getArrayFromCacheJson($cache_key);
+
+        if (empty($cache_value_array)) {
             $gtrends = new GTrends($this->options);
-            $array_gtrend = $gtrends->getSuggestionsAutocomplete($kWord) ?? [];
-            Cache::put($cache_key, json_encode($array_gtrend));
-        } else {
-            $array_gtrend = json_decode($cache_value, true);
+            $cache_value_array = $gtrends->getSuggestionsAutocomplete($kWord);
+
+            $this->setArrayToCacheJson($cache_key, $cache_value_array);
         }
 
-        return $array_gtrend;
+        $t2 = time();
+
+        echo "time: " . ($t2 - $t1) . ' s' . "\n";
+        $this->sleep_delay($t2 - $t1);
+
+        return $cache_value_array ?? [];
     }
 
     public function getAllOneKeyWord(string $kWord): array
@@ -100,7 +108,7 @@ class GTrendsService
 
         $t2 = time();
 
-        echo "time: " . ($t2 - $t1) . ' s';
+        echo "time: " . ($t2 - $t1) . ' s' . "\n";
         $this->sleep_delay($t2 - $t1);
 
         return $cache_value_array ?? [];
@@ -108,19 +116,25 @@ class GTrendsService
 
     public function getRelatedTopics(string $kWord): array
     {
-        $cache_key = $this->getOptionsCacheKey('GTrends:' . __FUNCTION__ . ":" . $kWord);
-        $cache_value = Cache::get($cache_key);
+        $t1 = time();
 
-        if (empty($cache_value)) {
+        $cache_key = $this->getOptionsCacheKey('GTrends:' . __FUNCTION__ . ":" . $kWord);
+
+        $cache_value_array = $this->getArrayFromCacheJson($cache_key);
+
+        if (empty($cache_value_array)) {
             $gtrends = new GTrends($this->options);
-            $array_gtrend = $gtrends->getRelatedTopics($kWord) ?? [];
-            Cache::put($cache_key, json_encode($array_gtrend));
-        } else {
-            $array_gtrend = json_decode($cache_value, true);
+            $cache_value_array = $gtrends->getRelatedTopics($kWord);
+
+            $this->setArrayToCacheJson($cache_key, $cache_value_array);
         }
 
+        $t2 = time();
 
-        return $array_gtrend;
+        echo "time: " . ($t2 - $t1) . ' s' . "\n";
+        $this->sleep_delay($t2 - $t1);
+
+        return $cache_value_array ?? [];
     }
 
     private function getArrayFromCacheJson($cache_key)
