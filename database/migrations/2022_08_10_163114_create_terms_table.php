@@ -15,10 +15,10 @@ class CreateTermsTable extends Migration
     public function up()
     {
         Schema::create('terms', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('name')->unique();
-            $table->string('namespace')->index();
-            $table->unsignedTinyInteger('type')->default(0)->comment('类型，0=normal，1=topic，2=query');
+            //$table->bigIncrements('id');
+            $table->string('name')->primary();
+            $table->string('tag_name')->index();
+            $table->unsignedTinyInteger('type')->default(0)->comment('类型，0=term，1=topic，2=query');
             $table->json('suggestion_json')->nullable();
             $table->json('related_topics_json')->nullable();
             $table->json('all_json')->nullable();

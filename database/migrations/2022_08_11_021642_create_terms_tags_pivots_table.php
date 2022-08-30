@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateKeywordsTagsPivotsTable extends Migration
+class CreateTermsTagsPivotsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,19 @@ class CreateKeywordsTagsPivotsTable extends Migration
      */
     public function up()
     {
-        Schema::create('words_tags_pivots', function (Blueprint $table) {
+        Schema::create('terms_tags_pivots', function (Blueprint $table) {
             $table->bigIncrements('id');
-            //word, 词
-            $table->unsignedBigInteger('word_id')->default(0)->index();
-            $table->string('word_name')->default("");
+            //term, 词
+            $table->unsignedBigInteger('term_id')->default(0)->index();
+            $table->string('term_name')->default("");
             //tag，标签
             $table->unsignedBigInteger('tag_id')->default(0)->index();
             $table->string('tag_name')->default("");
             //
-            $table->unique(['word_id','tag_id']);
-            //$table->timestamps();
+            $table->unique(['term_id','tag_id']);
+            $table->index('term_name');
+            $table->index('tag_name');
+            $table->timestamps();
         });
     }
 
@@ -34,6 +36,6 @@ class CreateKeywordsTagsPivotsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('words_tags_pivots');
+        Schema::dropIfExists('terms_tags_pivots');
     }
 }
