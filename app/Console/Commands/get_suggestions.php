@@ -75,18 +75,19 @@ class get_suggestions extends Command
 
             //不存在则创建
             if (empty($obj_suggestion)) {
-                $this->comment($obj_term->term . "terms_suggestions creating...");
+                $this->comment($obj_term->term . " terms_suggestions creating...");
                 //网络请求
                 $arr_suggestion = $this->getSuggestionsArray($obj_term->term);
-                if (!empty($arr_suggestion)) {
-                    $obj_suggestion = new TermsSuggestion();
-                    $obj_suggestion->term = $obj_term->term;
-                    $obj_term->suggestion_json = json_encode($arr_suggestion);
-                    $obj_term->data_source = 'Google Trends';
-                    $obj_term->save();
-                } else {
+                if (empty($arr_suggestion)) {
                     $this->warn("arr_suggestion empty!");
                 }
+
+                //空也创建
+                $obj_suggestion = new TermsSuggestion();
+                $obj_suggestion->term = $obj_term->term;
+                $obj_suggestion->json_suggestion = json_encode($arr_suggestion);
+                $obj_suggestion->data_source = 'Google Trends';
+                $obj_suggestion->save();
             }
 
             //存在，但空，则补充
@@ -97,9 +98,9 @@ class get_suggestions extends Command
                     //网络请求
                     $arr_suggestion = $this->getSuggestionsArray($obj_term->term);
                     if (!empty($arr_suggestion)) {
-                        $obj_term->suggestion_json = json_encode($arr_suggestion);
-                        $obj_term->data_source = 'Google Trends';
-                        $obj_term->save();
+                        $obj_suggestion->json_suggestion = json_encode($arr_suggestion);
+                        $obj_suggestion->data_source = 'Google Trends';
+                        $obj_suggestion->save();
                     } else {
                         $this->warn("arr_suggestion empty!");
                     }
@@ -172,9 +173,9 @@ class get_suggestions extends Command
                 }
             }
 
-            if ($is_save) {
-                $obj_term->save();
-            }
+            /*            if ($is_save) {
+                            $obj_term->save();
+                        }*/
 
 
         }

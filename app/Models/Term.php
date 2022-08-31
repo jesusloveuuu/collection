@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\DB;
 class Term extends Model
 {
 
+    protected $primaryKey = 'term';
+    public $incrementing = false;
 
     protected $dates = ['created_at', 'updated_at'];
 

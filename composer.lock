@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "16aaf51e9d5a33e5cd7ac4778863a92d",
+    "content-hash": "28b5a10a8a5a6b7a3a3e1c20bc3fbf9a",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -358,11 +358,11 @@
         },
         {
             "name": "laminas/laminas-http",
-            "version": "2.15.1",
+            "version": "2.16.0",
             "dist": {
                 "type": "zip",
-                "url": "http://10.64.64.44:8081/repository/composer-public/laminas/laminas-http/2.15.1/laminas-laminas-http-2.15.1.zip",
-                "reference": "261f079c3dffcf6f123484db43c40e44c4bf1c79",
+                "url": "http://10.64.64.44:8081/repository/composer-public/laminas/laminas-http/2.16.0/laminas-laminas-http-2.16.0.zip",
+                "reference": "7300482d3e570e81b6a6ecf6b28da1b12334bf63",
                 "shasum": ""
             },
             "require": {
@@ -399,7 +399,7 @@
                 "http client",
                 "laminas"
             ],
-            "time": "2021-12-03T10:17:11+00:00"
+            "time": "2022-08-17T17:22:15+00:00"
         },
         {
             "name": "laminas/laminas-json",
@@ -551,25 +551,26 @@
         },
         {
             "name": "laminas/laminas-stdlib",
-            "version": "3.11.0",
+            "version": "3.13.0",
             "dist": {
                 "type": "zip",
-                "url": "http://10.64.64.44:8081/repository/composer-public/laminas/laminas-stdlib/3.11.0/laminas-laminas-stdlib-3.11.0.zip",
-                "reference": "aad7d2b11ba0069ba0d9b40f6dde3c2fa664b57f",
+                "url": "http://10.64.64.44:8081/repository/composer-public/laminas/laminas-stdlib/3.13.0/laminas-laminas-stdlib-3.13.0.zip",
+                "reference": "66a6d03c381f6c9f1dd988bf8244f9afb9380d76",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.3 || ~8.0.0 || ~8.1.0"
+                "php": "^7.4 || ~8.0.0 || ~8.1.0"
             },
             "conflict": {
                 "zendframework/zend-stdlib": "*"
             },
             "require-dev": {
                 "laminas/laminas-coding-standard": "~2.3.0",
-                "phpbench/phpbench": "^1.0",
-                "phpunit/phpunit": "^9.3.7",
+                "phpbench/phpbench": "^1.2.6",
+                "phpstan/phpdoc-parser": "^0.5.4",
+                "phpunit/phpunit": "^9.5.23",
                 "psalm/plugin-phpunit": "^0.17.0",
-                "vimeo/psalm": "^4.7"
+                "vimeo/psalm": "^4.26"
             },
             "type": "library",
             "autoload": {
@@ -586,7 +587,7 @@
                 "laminas",
                 "stdlib"
             ],
-            "time": "2022-07-27T12:28:58+00:00"
+            "time": "2022-08-24T13:56:50+00:00"
         },
         {
             "name": "laminas/laminas-uri",

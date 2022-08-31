@@ -55,8 +55,9 @@ class test extends Command
         ];
         $gt = new GTrends($options);
 
-        //$data = $gt->getSuggestionsAutocomplete("台湾");
-        $data = $gt->getAllOneKeyWord("/m/0jwx_my");
+        $data = $gt->getSuggestionsAutocomplete("旅游");
+        //$data = $gt->getAllOneKeyWord("/m/0jwx_my");
+
 
         //dd($gt->getGeo('/m/0d05w3'));
         //$data = $gt->getAllMultipleKeyWords(['USA', "UK"]);

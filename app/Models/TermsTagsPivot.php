@@ -10,4 +10,6 @@ class TermsTagsPivot extends Model
 
     protected $dates = ['created_at', 'updated_at'];
 
+    protected $fillable = ['term','tag'];
+
 }

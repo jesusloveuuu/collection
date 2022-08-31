@@ -13,6 +13,7 @@
         "laravel/framework": "^6.20.26",
         "laravel/tinker": "^2.5",
         "maatwebsite/excel": "^3.1",
+        "phpoffice/phpspreadsheet": "^1.24",
         "x-fran/g-trends": "^3.1"
     },
     "require-dev": {

@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Exports\TermsExport;
 use App\Imports\TermsTagsImport;
 use App\Models\ImportKeyword;
 use App\Models\Tag;
@@ -11,21 +12,21 @@ use App\Models\WordsTag;
 use Illuminate\Console\Command;
 use Maatwebsite\Excel\Facades\Excel;
 
-class import_terms_from_excel extends Command
+class export_terms_to_excel extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'import_terms_from_excel';
+    protected $signature = 'export_terms_to_excel';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description 从excel获取关键词';
+    protected $description = 'Command description 导出关键词到excel';
 
     /**
      * Create a new command instance.
@@ -37,7 +38,7 @@ class import_terms_from_excel extends Command
         parent::__construct();
     }
 
-    private $path = "import_terms_from_excel";
+    private $path = "export_terms_to_excel";
 
     /**
      * Execute the console command.
@@ -50,30 +51,19 @@ class import_terms_from_excel extends Command
         $this->line(str_repeat("\n", 32));
         $this->line(str_repeat("-", 128));
         $this->info("begin");
-        $this->info("import_terms_from_excel");
+        $this->info("export_terms_to_excel");
 
-        //获取相对路径，静态参数
-        $argument_path = $this->path ?? "";
-        $this->info("argument_path: $argument_path");
-        if (empty($argument_path)) {
-            $this->error("argument_path is empty!");
-            exit();
+        $date = date('Y_m_d_H_i_s',time());
+        $filename = "Terms_$date.xlsx";
+
+        $this->info("storing...$filename");
+        $is_success  = Excel::store(new TermsExport(), $filename,'export');
+
+        if($is_success){
+            $this->info("export success!");
+        }else{
+            $this->warn("export failed!");
         }
-        var_dump($argument_path);
-
-
-        //获取绝对路径
-        $root_dir = storage_path("app/$argument_path/");
-        $is_dir = is_dir($root_dir);
-        if (empty($is_dir)) {
-            $this->error("$root_dir is not a dir!");
-            exit();
-        }
-        var_dump($root_dir);
-
-
-        $import = new TermsTagsImport;
-        Excel::import($import, 'import_terms_from_excel\import_terms_from_excel.xlsx');
 
         $this->info("end");
         $this->line(str_repeat("-", 128));
