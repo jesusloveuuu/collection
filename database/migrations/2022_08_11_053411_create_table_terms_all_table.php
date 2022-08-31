@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateExplorationsTable extends Migration
+class CreateTermsAllTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,15 @@ class CreateExplorationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('explorations', function (Blueprint $table) {
+        Schema::create('terms_all', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('term')->index();
-            $table->unsignedTinyInteger('type')->default(0)->comment('类型，0=term，1=topic，2=query');
-            $table->json('json_suggestion')->nullable();
-            $table->json('related_topics_json')->nullable();
-            $table->json('all_json')->nullable();
+            $table->json('json_all_data')->nullable();
+            $table->string('hl')->index();
+            $table->integer('tz')->index();
+            $table->string('geo')->index();
+            $table->string('time')->index();
+            $table->integer('category')->index();
             $table->timestamps();
         });
     }
@@ -31,6 +33,6 @@ class CreateExplorationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('explorations');
+        Schema::dropIfExists('terms_all');
     }
 }

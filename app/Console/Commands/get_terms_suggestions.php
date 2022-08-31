@@ -11,21 +11,21 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 use XFran\GTrends\GTrends;
 
-class get_suggestions extends Command
+class get_terms_suggestions extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'get_suggestions';
+    protected $signature = 'get_terms_suggestions';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = '获取建议';
+    protected $description = '获取关键词建议';
 
     /**
      * Create a new command instance.
@@ -48,7 +48,7 @@ class get_suggestions extends Command
         $this->line(str_repeat("\n", 32));
         $this->line(str_repeat("-", 128));
         $this->info("begin");
-        $this->info("get_suggestions");
+        $this->info("get_terms_suggestions");
 
         //参数
         //$argument_begin = $this->argument('begin');
@@ -62,7 +62,7 @@ class get_suggestions extends Command
         foreach ($arr_obj_terms as $i_term => $obj_term) {
 
             $this->info("index: " . $i_term . ' / ' . $total);
-            $is_save = false;
+
             if (empty($obj_term)) {
                 $this->warn("term empty!");
                 continue;
@@ -189,8 +189,7 @@ class get_suggestions extends Command
     public function getSuggestionsArray($keyword)
     {
         $this->info("GTrends...");
-        $random = random_int(5, 15);
-        sleep($random);//暂停，反反爬虫
+
         $options = [
             'hl' => 'en-US',//英文
             'tz' => 0,//没搞懂
