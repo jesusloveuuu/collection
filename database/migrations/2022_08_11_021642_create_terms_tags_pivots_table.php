@@ -16,16 +16,17 @@ class CreateTermsTagsPivotsTable extends Migration
         Schema::create('terms_tags_pivots', function (Blueprint $table) {
             $table->bigIncrements('id');
             //term, 词
-            $table->unsignedBigInteger('term_id')->default(0)->index();
-            $table->string('term_name')->default("");
+            //$table->unsignedBigInteger('term_id')->default(0)->index();
+            $table->string('term')->default("");
             //tag，标签
-            $table->unsignedBigInteger('tag_id')->default(0)->index();
-            $table->string('tag_name')->default("");
+            //$table->unsignedBigInteger('tag_id')->default(0)->index();
+            $table->string('tag')->default("");
+            $table->timestamps();
             //
-            $table->unique(['term_id','tag_id']);
+            //$table->unique(['term_id','tag_id']);
+            $table->unique(['term_name','tag_name']);
             $table->index('term_name');
             $table->index('tag_name');
-            $table->timestamps();
         });
     }
 

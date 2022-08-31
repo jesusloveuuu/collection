@@ -16,12 +16,14 @@ class CreateTermsTable extends Migration
     {
         Schema::create('terms', function (Blueprint $table) {
             //$table->bigIncrements('id');
-            $table->string('name')->primary();
-            $table->string('tag_name')->index();
+            $table->string('term')->primary()->comment('主键');
+            $table->string('title')->nullable()->comment('标题');
             $table->unsignedTinyInteger('type')->default(0)->comment('类型，0=term，1=topic，2=query');
-            $table->json('suggestion_json')->nullable();
+            $table->string('classification')->nullable()->comment('人工分类');
+            $table->string('description')->nullable()->comment('描述');
+/*            $table->json('suggestion_json')->nullable();
             $table->json('related_topics_json')->nullable();
-            $table->json('all_json')->nullable();
+            $table->json('all_json')->nullable();*/
             $table->timestamps();
         });
     }

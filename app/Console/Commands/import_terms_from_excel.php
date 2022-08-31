@@ -9,21 +9,21 @@ use App\Models\TermsTagsPivot;
 use App\Models\WordsTag;
 use Illuminate\Console\Command;
 
-class import_terms_from_path extends Command
+class import_terms_from_excel extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'import_terms_from_path';
+    protected $signature = 'import_terms_from_excel';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description 从文件名获取关键词';
+    protected $description = 'Command description 从excel获取关键词';
 
     /**
      * Create a new command instance.
@@ -35,7 +35,7 @@ class import_terms_from_path extends Command
         parent::__construct();
     }
 
-    private $path = "import_terms_from_path";
+    private $path = "import_terms_from_excel";
 
     /**
      * Execute the console command.

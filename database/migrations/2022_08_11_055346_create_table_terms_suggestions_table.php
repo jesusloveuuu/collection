@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateKeyWordsSuggestionsTable extends Migration
+class CreateTermsSuggestionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,11 +15,11 @@ class CreateKeyWordsSuggestionsTable extends Migration
     {
         Schema::create('terms_suggestions', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('term_id')->index();
-            $table->string('term_name');
-            $table->json('suggestion');
+            $table->string('term')->index();
+            $table->json('json_suggestion');
             $table->string('data_source')->default("");
             $table->timestamps();
+            //$table->unsignedBigInteger('term_id')->nullable();
         });
     }
 
@@ -30,6 +30,6 @@ class CreateKeyWordsSuggestionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('keywords_suggestions');
+        Schema::dropIfExists('terms_suggestions');
     }
 }
