@@ -12,14 +12,14 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 use XFran\GTrends\GTrends;
 
-class analyze_term_suggestions extends Command
+class analyze_terms_suggestions extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'analyze_term_suggestions';
+    protected $signature = 'analyze_terms_suggestions';
 
     /**
      * The console command description.
@@ -49,7 +49,7 @@ class analyze_term_suggestions extends Command
         $this->line(str_repeat("\n", 32));
         $this->line(str_repeat("-", 128));
         $this->info("begin");
-        $this->info("get_terms_suggestions");
+        $this->info("analyze_terms_suggestions");
 
         //参数
         //$argument_begin = $this->argument('begin');
