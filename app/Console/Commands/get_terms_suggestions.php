@@ -91,7 +91,7 @@ class get_terms_suggestions extends Command
             }
 
             //存在，但空，则补充
-            if (!empty($obj_suggestion)) {
+            if ($obj_suggestion !== null) {
                 if (empty($obj_suggestion->json_suggestion)) {
                     $this->comment($obj_term->term . " json_suggestion auto completing...");
 
@@ -106,76 +106,6 @@ class get_terms_suggestions extends Command
                     }
                 }
             }
-
-            //关联操作
-            if (0) {
-                $arr_suggestion = json_decode($obj_term->suggestion_json, true);
-                $array_topics = $arr_suggestion['topics'] ?? [];
-                if (!empty($array_topics)) {
-
-                    //补充完善json，相似度等
-                    if (empty($array_topics[0]['similar'] ?? null)) {
-                        //获取相似度map
-                        $this->info("checking array_topics similar");
-                        foreach ($array_topics as $index_topic => $object_topic) {
-                            similar_text($obj_term->name, $object_topic['title'], $percent);
-                            $array_topics[$index_topic]['similar'] = $percent;
-                        }
-
-                        array_multisort(array_column($array_topics, 'similar'), SORT_DESC, $array_topics);
-
-                        $arr_suggestion['topics'] = $array_topics;
-
-                        $obj_term->suggestion_json = json_encode($arr_suggestion);
-
-                        $is_save = true;
-                    }
-
-                    //检查字符完全相等
-                    $this->info("checking array_topics");
-                    foreach ($array_topics as $index_topic => $object_topic) {
-                        if ($obj_term->name === $object_topic['title']) {
-                            $this->info("Comparing " . $object_topic['title'] . ' and ' . $obj_term->name);
-                            //创建对应话题
-                            $topic_most_similar = Topic::where('mid', $object_topic['mid'])->orderBy('id', 'desc')->first();
-                            if (empty($topic_most_similar)) {
-                                $topic_most_similar = new Topic();
-                                $topic_most_similar = $topic_most_similar->createTopic($object_topic);
-                                $this->info("Created Topic ID: " . $topic_most_similar->id);
-                                $is_save = true;
-                            } else {
-                                $this->info("Already exist Topic ID: " . $topic_most_similar->id);
-                            }
-
-                            //创建topic对应的term
-                            $mid = $object_topic['mid'];
-                            $term_most_similar = Term::where('name', '=', $mid)->where('type', 1)->orderBy('id', 'desc')->first();
-
-                            //不存在则创建
-                            if (empty($term_most_similar)) {
-                                $this->comment("\"$mid\" term creating...");
-                                $term_most_similar = new Term();
-                                $term_most_similar->name = $mid;
-                                $term_most_similar->namespace = '';
-                                $term_most_similar->type = 1;
-                                $term_most_similar->topic_title = $object_topic['title'];
-                                $term_most_similar->topic_type = $object_topic['type'];
-                                $term_most_similar->save();
-                                $this->info("\"$mid\" term created, Term ID: $term_most_similar->id");
-                            } else {
-                                $this->info("\"$mid\" term already exists, Term ID: $term_most_similar->id");
-                            }
-
-                        }
-                    }
-
-
-                }
-            }
-
-            /*            if ($is_save) {
-                            $obj_term->save();
-                        }*/
 
 
         }

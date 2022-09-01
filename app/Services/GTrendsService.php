@@ -170,22 +170,23 @@ class GTrendsService
 
     private function sleep_delay($time = 10)
     {
-        if ($time < 5) {
+        if ($time < 1) {
             $time = 1;
         } else if ($time > 60) {
             $time = 60;
         }
 
-        for ($i = $time; $i > 0; $i--) {
-
-            $random = random_int(0, $time);
-            echo "($i,$random).";
-            if ($random !== 0) {
-                $i++;
+        $s = $time;
+        while ($s > 0) {
+            $random = random_int(0, $s);
+            echo "($s,$random)";
+            if ($random === 0) {
+                $s--;
             }
-            sleep(1);//暂停，反反爬虫
-        }
 
+            //暂停，避免反爬虫
+            sleep(1);
+        }
         echo "\n";
 
         return true;

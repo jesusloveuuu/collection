@@ -41,7 +41,7 @@ class TermsTagsImport implements ToModel, WithHeadingRow
                     echo "Creating...Term: $str_term \n";
                     $term = new Term();
                     $term->term = $str_term;
-                    $term->classification = $str_tag;
+                    $term->tag_first = $str_tag;
                     $term->type = Term::TYPE_TERM;
                     $term->save();
                 } else {

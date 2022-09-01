@@ -126,51 +126,52 @@ class import_terms_from_path extends Command
         $map_tag_term = $map_dir_file;
 
         foreach ($map_tag_term as $t_tag => $arr_t_term) {
-            //查找tag，不存在则创建
+            //tag，不存在则创建
             $tag = Tag::where('tag', '=', $t_tag)->orderBy('tag', 'desc')->first();
             if (empty($tag)) {
-                $this->comment("\"$t_tag\" tag creating...");
+                $this->comment("Creating...Tag: " . $t_tag);
                 $tag = new Tag();
                 $tag->tag = $t_tag;
                 $tag->save();
             } else {
-                $this->info("\"$t_tag\" tag already exists, Tag: $tag->tag");
+                $this->info("Already exists, Tag: $tag->tag");
             }
 
             //遍历map
             foreach ($arr_t_term as $t_term) {
                 //查找term：不存在则创建
-                $term = Term::where('term', '=', $t_term)->orderBy('term', 'desc')->first();
+                $term = Term::where('term', '=', $t_term)->first();
                 if (empty($term)) {
-                    $this->comment("\"$t_term\" term creating...");
+                    $this->comment("Creating...Term: " . $t_term);
                     $term = new Term();
                     $term->term = $t_term;
-                    $term->tag_name = $t_tag;
+                    $term->tag_first = $t_tag;
                     $term->type = Term::TYPE_TERM;
                     $term->save();
                 } else {
-                    $this->info("\"$t_term\" term already exists, Term: $term->term");
-                }
-
-                //是否补充数据
-                if (1) {
-                    $this->comment("\"$t_term\" term auto completing..., Term: $term->term");
-                    if (empty($term->term)) $term->name = $t_term ?? '';
-                    if (empty($term->tag_name)) $term->tag_name = $t_tag ?? '';
-                    $term->save();
+                    $this->info("Already exists, Term: $term->term");
+                    //是否补充数据
+                    if (1) {
+                        //if (empty($term->term)) $term->term = $t_term ?? '';
+                        if (empty($term->tag_first)) {
+                            $this->comment("Auto completing...Term: $term->term");
+                            $term->tag_first = $t_tag ?? '';
+                            $term->save();
+                        }
+                    }
                 }
 
                 //检测关联
                 $term_tag_pivot = TermsTagsPivot::where('term', $term->term)->where('tag', $tag->tag)->orderBy('id', 'desc')->first();
                 if (empty($term_tag_pivot)) {
                     //不存在，创建
-                    $this->comment("term_tag creating");
+                    $this->comment("Creating...term_tag");
                     $term_tag_pivot = new TermsTagsPivot();
                     $term_tag_pivot->term = $term->term;
                     $term_tag_pivot->tag = $tag->tag;
                     $term_tag_pivot->save();
                 } else {
-                    $this->info("term_tag already exists, id: " . $term_tag_pivot->id);
+                    $this->info("Already exists, term_tag id: " . $term_tag_pivot->id);
                 }
 
             }

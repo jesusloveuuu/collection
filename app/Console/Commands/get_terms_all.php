@@ -93,33 +93,34 @@ class get_terms_all extends Command
                 $obj_term_all->save();
             }
 
-            //存在，但空，则补充
-            if (!empty($obj_term_all)) {
+            //临时补充关联字段
+            if(1){
+                if (!empty($obj_term_all)) {
+                    foreach ($this->options as $k_option => $v_option) {
+                        $obj_term_all->$k_option = $v_option;
+                    }
+                    $obj_term_all->save();
 
-                foreach ($this->options as $k_option => $v_option) {
-                    $obj_term_all->$k_option = $v_option;
                 }
-                $obj_term_all->save();
-
             }
 
             //存在，但空，则补充
-            if (!empty($obj_term_all)) {
-
+            if ($obj_term_all !== null) {
                 if (empty($obj_term_all->json_all)) {
                     $this->comment($obj_term->term . " json_all auto completing...");
 
                     //网络请求
                     $arr_term_all = $this->getAllOneKeywordArray($obj_term->term);
-                    if (!empty($arr_term_all)) {
-                        $obj_term_all->json_all = json_encode($arr_term_all);
-                        foreach ($this->options as $k_option => $v_option) {
-                            $obj_term_all->$k_option = $v_option;
-                        }
-                        $obj_term_all->save();
-                    } else {
+                    if (empty($arr_term_all)) {
                         $this->warn("arr_term_all empty!");
                     }
+
+                    //空也补充
+                    $obj_term_all->json_all = json_encode($arr_term_all);
+                    foreach ($this->options as $k_option => $v_option) {
+                        $obj_term_all->$k_option = $v_option;
+                    }
+                    $obj_term_all->save();
                 }
             }
 

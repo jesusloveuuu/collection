@@ -22,7 +22,7 @@ class TermsExport implements FromCollection,WithHeadings
             'term',
             'title',
             'type',
-            'classification',
+            'tag_first',
             'description',
             'created_at',
             'updated_at',
